@@ -9,7 +9,7 @@ from torch.utils.data import DataLoader
 training_data = datasets.FashionMNIST(
     root="data",
     train=True,
-    download=True,
+    download=True,    
     transform=ToTensor(),
 )
 
