@@ -108,7 +108,6 @@ print(len(train_X), len(test_X))
 BATCH_SIZE = 100
 EPOCHS = 10
 
-
 for epoch in range(EPOCHS):
     for i in tqdm(range(0, len(train_X), BATCH_SIZE)): # from 0, to the len of x, stepping BATCH_SIZE at a time. [:50] ..for now just to dev
         #print(f"{i}:{i+BATCH_SIZE}")
