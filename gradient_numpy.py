@@ -18,7 +18,7 @@ def loss(y, y_pred):
 #derivative of MSE = 1/n 2x (y_pred - y)
 
 def gradient(x, y, y_pred):
-    return np.dot(2*x, y_pred - y).mean()
+    return np.dot(2 * x, y_pred - y).mean()
 
 learning_rate = 0.01
 n_iters = 100
