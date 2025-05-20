@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
-from models.ConvolutionalNeuralNetwork import ConvolutionalNeuralNetwork
+from models.mdl_mnist_202520 import mdl_mnist_202520
 
 #convert imnest image files into tensors
 transform = transforms.ToTensor()
@@ -27,7 +27,7 @@ train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
 test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 
 torch.manual_seed(41) # for reproducibility
-model = ConvolutionalNeuralNetwork()
+model = mdl_mnist_202520()
 # print(model)
 
 #loss function

@@ -3,7 +3,7 @@ from flask_cors import CORS
 from PIL import Image, ImageOps
 import torch
 import torchvision.transforms as transforms
-from models.ConvolutionalNeuralNetwork import ConvolutionalNeuralNetwork
+from models.mdl_mnist_202520 import ConvolutionalNeuralNetwork
 import matplotlib.pyplot as plt
 
 app = Flask(__name__)
