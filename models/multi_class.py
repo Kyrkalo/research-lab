@@ -30,8 +30,8 @@ class NeuralNet2(nn.Module):
         #no softmax functiion here, because nn.CrossEntropyLoss() applies softmax internally
         return out
     
-model1 = NeuralNet1(28*28, 5, 1)
-criterion = nn.BCELoss()
+# model1 = NeuralNet1(28*28, 5, 1)
+# criterion = nn.BCELoss()
 
-model2 = NeuralNet2(28*28, 5, 3)
-criteriopn = nn.CrossEntropyLoss()
+# model2 = NeuralNet2(28*28, 5, 3)
+# criteriopn = nn.CrossEntropyLoss()

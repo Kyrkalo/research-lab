@@ -10,7 +10,7 @@ import pandas as pd
 from sklearn.metrics import confusion_matrix
 import matplotlib.pyplot as plt
 
-from ConvolutionalNeuralNetwork import ConvolutionalNeuralNetwork
+from models.ConvolutionalNeuralNetwork import ConvolutionalNeuralNetwork
 
 #convert imnest image files into tensors
 transform = transforms.ToTensor()
@@ -23,8 +23,8 @@ test_data = datasets.MNIST(root='./cnn_data', train=False, download=True, transf
 # print("Length of train data: ", len(train_data))
 # print("Length of test data: ", len(test_data))
 
-train_loader = DataLoader(train_data, batch_size=128, shuffle=True)
-test_loader = DataLoader(test_data, batch_size=128, shuffle=False)
+train_loader = DataLoader(train_data, batch_size=64, shuffle=True)
+test_loader = DataLoader(test_data, batch_size=64, shuffle=False)
 
 torch.manual_seed(41) # for reproducibility
 model = ConvolutionalNeuralNetwork()
@@ -33,7 +33,7 @@ model = ConvolutionalNeuralNetwork()
 #loss function
 criterion = nn.CrossEntropyLoss()
 #optimizer
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0011)
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 #training the model
 
 import time
@@ -42,7 +42,7 @@ start_time = time.time()
 
 #create a variables to track things
 
-num_epochs = 50
+num_epochs = 10
 train_loss = []
 train_correct = []
 test_loss = []
@@ -58,8 +58,6 @@ for epoch in range(num_epochs):
 
         predicted = torch.max(y_pred, dim=1) # get the predicted class
         batch_corr = (predicted[1] == y_train).sum() # compare predicted class with actual class
-        trn_corr += batch_corr
-
 
 
         optimizer.zero_grad()
@@ -71,7 +69,6 @@ for epoch in range(num_epochs):
             print(f" -----> Epoch {epoch+1}/{num_epochs}, Batch {b}, Loss: {loss.item()}")
            
         train_loss.append(loss.item())
-        train_correct.append(trn_corr.item())
 
 
 
@@ -92,6 +89,26 @@ print("Total time taken for training: ", total_time / 60, " minutes")
 #         test_loss.append(loss.item())
 #         test_correct.append(predicted[1].eq(y_test).sum().item())
 
+
+#grab the image
+# test_data[4143] # tensor of shape (1, 28, 28) and label 4
+
+#grab just the data
+#reshape to (28, 28)
+# img = test_data[4143][0] # tensor of shape (1, 28, 28)
+# img = img.view(28, 28) # tensor of shape (28, 28)
+
+model.eval() # set the model to evaluation mode
+with torch.no_grad():
+    new_pred = model(test_data[4143][0].view(1,1, 28, 28)) # add batch dimension
+
+new_pred = torch.max(new_pred, dim=1)[1] # get the predicted class
+
+print("Predicted class: ", new_pred.item())
+print("Actual class: ", test_data[4143][1])
+
+torch.save(model.state_dict(), 'model.pth') # save the model
+
 plt.plot(train_loss, label='Train Loss', color='blue')
 # plt.plot(test_loss, label='Test Loss', color='green')
 # plt.plot(train_correct, label='Train Correct', color='red')
@@ -99,21 +116,3 @@ plt.plot(train_loss, label='Train Loss', color='blue')
 # plt.title('Accuracy')
 plt.legend()
 plt.show()
-
-#grab the image
-# test_data[4143] # tensor of shape (1, 28, 28) and label 4
-
-#grab just the data
-#reshape to (28, 28)
-img = test_data[4143][0] # tensor of shape (1, 28, 28)
-img = img.view(28, 28) # tensor of shape (28, 28)
-
-model.eval() # set the model to evaluation mode
-with torch.no_grad():
-    new_pred = model(test_data[4143][0].view(1,1, 28, 28)) # add batch dimension
-
-new_pred = torch.max(new_pred, dim=1)[1] # get the predicted class
-print("Predicted class: ", new_pred.item())
-print("Actual class: ", test_data[4143][1])
-
-torch.save(model.state_dict(), 'model.pth') # save the model
