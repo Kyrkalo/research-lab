@@ -37,8 +37,8 @@ import re
 
 text = "Hello, world. This, is a test."
 result = re.split(r'([,.]|\s)', text)
-print(len(result))
-print(result)
+# print(len(result))
+# print(result)
 
 # We don't only want to split on whitespaces but also commas and periods, so let's modify the regular expression to do that as well
 # Strip whitespace from each item and then filter out any empty strings.
@@ -46,8 +46,28 @@ result = [item for item in result if item.strip()]
 print(result)
 
 #This looks pretty good, but let's also handle other types of punctuation, such as periods, question marks, and so on
-text = "Hello, world. Is this-- a test?"
+preprocessed = re.split(r'([,.:;?_!"()\']|--|\s)', raw_text)
+preprocessed = [item.strip() for item in preprocessed if item.strip()]
+print(preprocessed)
+print(len(preprocessed))
 
-result = re.split(r'([,.:;?_!"()\']|--|\s)', text)
-result = [item.strip() for item in result if item.strip()]
-print(result)
+# Converting tokens into token IDs
+
+all_words = sorted(set(preprocessed))
+vocab_size = len(all_words)
+
+print(vocab_size)
+
+vocab = {token:integer for integer,token in enumerate(all_words)}
+
+text = """"It's the last he painted, you know," 
+           Mrs. Gisburn said with pardonable pride."""
+
+from nlp.tokenizers import SimpleTokenizerV1
+tokenizer = SimpleTokenizerV1(vocab)
+ids = tokenizer.encode(text)
+print(ids)
+print(tokenizer.decode(ids))
+
+
+#2.4 Adding special context tokens
