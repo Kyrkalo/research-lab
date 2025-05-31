@@ -23,8 +23,8 @@ if not os.path.exists("the-verdict.txt"):
 with open("the-verdict.txt", "r", encoding="utf-8") as f:
     raw_text = f.read()
     
-print("Total number of character:", len(raw_text))
-print(raw_text[:99])
+# print("Total number of character:", len(raw_text))
+# print(raw_text[:99])
 
 '''
 Total number of character: 20479
@@ -58,7 +58,7 @@ all_words = sorted(set(preprocessed))
 all_words.extend(["<|endoftext|>", "<|unk|>"])
 vocab_size = len(all_words)
 
-print(vocab_size)
+# print(vocab_size)
 
 vocab = {token:integer for integer,token in enumerate(all_words)}
 
@@ -68,8 +68,8 @@ text = """"It's the last he painted, you know,"
 from nlp.tokenizers import SimpleTokenizerV1, SimpleTokenizerV2
 tokenizer = SimpleTokenizerV1(vocab)
 ids = tokenizer.encode(text)
-print(ids)
-print(tokenizer.decode(ids))
+# print(ids)
+# print(tokenizer.decode(ids))
 
 
 #2.4 Adding special context tokens
@@ -84,9 +84,35 @@ text1 = "Hello, do you like tea?"
 text2 = "In the sunlit terraces of the palace."
 text = " <|endoftext|> ".join((text1, text2))
 
-print(text)
-print(tokenizer.encode(text))
-print(tokenizer.decode(tokenizer.encode(text)))
+# print(text)
+# print(tokenizer.encode(text))
+# print(tokenizer.decode(tokenizer.encode(text)))
 
 
-#2.5 BytePair encoding
+# 2.5 BytePair encoding
+# 2.6 Data sampling with a sliding window
+from datasets.GPTDatasetV1 import create_dataloader_v1
+
+with open("the-verdict.txt", "r", encoding="utf-8") as f:
+    raw_text = f.read()
+
+dataloader = create_dataloader_v1(
+    raw_text, batch_size=1, max_length=4, stride=1, shuffle=False
+)
+
+data_iter = iter(dataloader)
+
+first_batch = next(data_iter)
+print(first_batch)
+
+second_batch = next(data_iter)
+print(second_batch)
+
+
+print('----------------------------')
+dataloader = create_dataloader_v1(raw_text, batch_size=8, max_length=4, stride=4, shuffle=False)
+
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+print("Inputs:\n", inputs)
+print("\nTargets:\n", targets)

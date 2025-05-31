@@ -42,8 +42,8 @@ composed = torchvision.transforms.Compose([
     MulTransform(5)
 ])
 
-dataset = WineDataset(transform=composed)
-first_data = dataset[0]
-feature, label = first_data
-print(feature)
-print(type(feature), type(label))
+# dataset = WineDataset(transform=composed)
+# first_data = dataset[0]
+# feature, label = first_data
+# print(feature)
+# print(type(feature), type(label))
