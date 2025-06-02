@@ -116,3 +116,48 @@ data_iter = iter(dataloader)
 inputs, targets = next(data_iter)
 print("Inputs:\n", inputs)
 print("\nTargets:\n", targets)
+
+
+#2.7 Creating token embeddings
+
+input_ids = torch.tensor([2, 3, 5, 1])
+
+vocab_size = 6
+output_dim = 3
+
+torch.manual_seed(123)
+embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+print(embedding_layer.weight)
+print(embedding_layer(torch.tensor([3])))
+
+
+# 47
+print('The BytePair encoder has a vocabulary size of 50,257:')
+print('Suppose we want to encode the input tokens into a 256-dimensional vector representation:')
+vocab_size = 50257
+output_dim = 256
+
+token_embedding_layer = torch.nn.Embedding(vocab_size, output_dim)
+print(token_embedding_layer.weight.shape)
+
+max_length = 4
+dataloader = create_dataloader_v1(
+    raw_text, batch_size=8, max_length=max_length,
+    stride=max_length, shuffle=False
+)
+data_iter = iter(dataloader)
+inputs, targets = next(data_iter)
+
+print("Token IDs:\n", inputs)
+print("\nInputs shape:\n", inputs.shape)
+
+context_length = max_length
+pos_embedding_layer = torch.nn.Embedding(context_length, output_dim)
+
+# uncomment & execute the following line to see how the embedding layer weights look like
+# print(pos_embedding_layer.weight)
+pos_embeddings = pos_embedding_layer(torch.arange(max_length))
+print(pos_embeddings.shape)
+
+# uncomment & execute the following line to see how the embeddings look like
+# print(pos_embeddings)
