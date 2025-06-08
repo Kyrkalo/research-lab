@@ -52,3 +52,26 @@ for i,x_i in enumerate(inputs):
 print(context_vec_2)
 
 #3.3.2 Computing attention weights for all input tokens
+#Apply previous step 1 to all pairwise elements to compute the unnormalized attention score matrix:
+attn_scores = torch.empty(6, 6)
+
+for i, x_i in enumerate(inputs):
+    for j, x_j in enumerate(inputs):
+        attn_scores[i, j] = torch.dot(x_i, x_j)
+
+print(attn_scores)
+
+# We can achieve the same as above more efficiently via matrix multiplication:
+attn_scores = inputs @ inputs.T
+print(attn_scores)
+
+# Similar to step 2 previously, we normalize each row so that the values in each row sum to 1:
+attn_weights = torch.softmax(attn_scores, dim=-1)
+print(attn_weights)
+
+# Quick verification that the values in each row indeed sum to 1:
+print('Quick verification that the values in each row indeed sum to 1:')
+row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240, 0.1082, 0.1581])
+print("Row 2 sum:", row_2_sum)
+
+print("All row sums:", attn_weights.sum(dim=-1))
