@@ -5,9 +5,9 @@ import torch.nn.functional as F
 
 
 # model class
-class mdl_mnist_202520(nn.Module):
+class Mdl_mnist_202520(nn.Module):
     def __init__(self):
-        super(mdl_mnist_202520, self).__init__()
+        super(Mdl_mnist_202520, self).__init__()
         self.conv1 = nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, padding=1)  # 28x28 -> 28x28
         self.pool1 = nn.MaxPool2d(kernel_size=2, stride=2)                                 # 28x28 -> 14x14
         

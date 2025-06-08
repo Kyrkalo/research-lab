@@ -5,9 +5,9 @@ import numpy as np
 import math
 
 class WineDataset(Dataset):
-    def __init__(self, transform=None):
+    def __init__(self, csv_file, transform=None):
         super().__init__()
-        xy = np.loadtxt('data/wine.csv', delimiter=',', dtype=np.float32, skiprows=1)
+        xy = np.loadtxt(csv_file, delimiter=',', dtype=np.float32, skiprows=1)
         self.x = torch.from_numpy(xy[:, 1:]) #features are in the second column onwards
         self.y = torch.from_numpy(xy[:, [0]]) #labels are in the first column
         self.n_samples = xy.shape[0] #number of samples
@@ -22,8 +22,7 @@ class WineDataset(Dataset):
             sample = self.transform(sample)
 
         return sample
-  
-
+    
 class ToTensor:
     def __call__(self, sample):
         inputs, target = sample
@@ -43,8 +42,8 @@ composed = torchvision.transforms.Compose([
     MulTransform(5)
 ])
 
-dataset = WineDataset(transform=composed)
-first_data = dataset[0]
-feature, label = first_data
-print(feature)
-print(type(feature), type(label))
+# dataset = WineDataset(transform=composed)
+# first_data = dataset[0]
+# feature, label = first_data
+# print(feature)
+# print(type(feature), type(label))
