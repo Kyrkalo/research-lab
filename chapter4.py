@@ -1,9 +1,31 @@
+# GPT2-small (the 124M configuration we already implemented):
+
+# "emb_dim" = 768
+# "n_layers" = 12
+# "n_heads" = 12
+# GPT2-medium:
+
+# "emb_dim" = 1024
+# "n_layers" = 24
+# "n_heads" = 16
+# GPT2-large:
+
+# "emb_dim" = 1280
+# "n_layers" = 36
+# "n_heads" = 20
+# GPT2-XL:
+
+# "emb_dim" = 1600
+# "n_layers" = 48
+# "n_heads" = 25
+
+
 GPT_CONFIG_124M = {
     "vocab_size": 50257,    # Vocabulary size
     "context_length": 1024, # Context length
-    "emb_dim": 768,         # Embedding dimension
-    "n_heads": 12,          # Number of attention heads
-    "n_layers": 12,         # Number of layers
+    "emb_dim": 1600,         # Embedding dimension
+    "n_heads": 25,          # Number of attention heads
+    "n_layers": 48,         # Number of layers
     "drop_rate": 0.1,       # Dropout rate
     "qkv_bias": False       # Query-Key-Value bias
 }
@@ -14,7 +36,9 @@ import tiktoken
 
 from models.dummyGPTModel import DummyGPTModel
 from models.feedForward import ExampleDeepNeuralNetwork, FeedForward, print_gradients
+from models.gpt_model import GPTModel
 from models.layerNorm import LayerNorm
+from models.transformerBlock import TransformerBlock
 
 tokenizer = tiktoken.get_encoding("gpt2")
 
@@ -69,7 +93,7 @@ print(GPT_CONFIG_124M["emb_dim"])
 ffn = FeedForward(GPT_CONFIG_124M)
 
 # input shape: [batch_size, num_token, emb_size]
-x = torch.rand(2, 3, 768) 
+x = torch.rand(2, 3, 1600) 
 out = ffn(x)
 print(out.shape)
 
@@ -87,3 +111,22 @@ print_gradients(model_without_shortcut, sample_input)
 
 # 4.5 Connecting attention and linear layers in a transformer block
 
+torch.manual_seed(123)
+
+x = torch.rand(2, 4, 1600)  # Shape: [batch_size, num_tokens, emb_dim]
+block = TransformerBlock(GPT_CONFIG_124M)
+output = block(x)
+
+print("Input shape:", x.shape)
+print("Output shape:", output.shape)
+
+torch.manual_seed(123)
+model = GPTModel(GPT_CONFIG_124M)
+
+out = model(batch)
+print("Input batch:\n", batch)
+print("\nOutput shape:", out.shape)
+print(out)
+
+total_params = sum(p.numel() for p in model.parameters())
+print(f"Total number of parameters: {total_params:,}")
