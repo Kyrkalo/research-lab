@@ -38,7 +38,9 @@ from models.dummyGPTModel import DummyGPTModel
 from models.feedForward import ExampleDeepNeuralNetwork, FeedForward, print_gradients
 from models.gpt_model import GPTModel
 from models.layerNorm import LayerNorm
+from models.tools import calculate_size
 from models.transformerBlock import TransformerBlock
+from poviders import GPTConfig, get_config
 
 tokenizer = tiktoken.get_encoding("gpt2")
 
@@ -123,10 +125,9 @@ print("Output shape:", output.shape)
 torch.manual_seed(123)
 model = GPTModel(GPT_CONFIG_124M)
 
-out = model(batch)
-print("Input batch:\n", batch)
-print("\nOutput shape:", out.shape)
-print(out)
 
-total_params = sum(p.numel() for p in model.parameters())
-print(f"Total number of parameters: {total_params:,}")
+for model_abbrev in (GPTConfig.GPT2_SMALL, GPTConfig.GPT2_MEDIUM, GPTConfig.GPT2_LARGE, GPTConfig.GPT2_XLARGE):
+    CONFIG = get_config(GPT_CONFIG_124M, model_name=model_abbrev)
+    model = GPTModel(CONFIG)
+    print(f"\n\n{model_abbrev}:")
+    calculate_size(model)
