@@ -34,7 +34,7 @@ import torch
 import torch.nn as nn
 import tiktoken
 
-from analysis.benchmark import calculate_with_automatic_batch_size, calculate_with_fixed_batch_size
+from analysis.benchmark import calculate_with_fixed_batch_size
 from models.dummyGPTModel import DummyGPTModel
 from models.feedForward import ExampleDeepNeuralNetwork, FeedForward, print_gradients
 from models.gpt_model import GPTModel
