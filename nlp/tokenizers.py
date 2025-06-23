@@ -1,4 +1,5 @@
 import re
+import torch
 
 class SimpleTokenizerV1:
     def __init__(self, vocab):
@@ -32,3 +33,15 @@ class SimpleTokenizerV2:
         # Replace spaces before the specified punctuations
         text = re.sub(r'\s+([,.:;?!"()\'])', r'\1', text)
         return text
+    
+class TokenizerV1:
+
+    def encode(self, tokenizer, text):
+        encoded = tokenizer.encode(text, allowed_special={"<|endoftext|>"})
+        encoded_tensor = torch.tensor(encoded).unsqueeze(0)  # Add batch dimension
+        return encoded_tensor
+    
+    def decode(self, tokenizer, token_ids):
+        flat = token_ids.squeeze(0).tolist()  # Remove batch dimension
+        decoded = tokenizer.decode(flat)
+        return decoded
