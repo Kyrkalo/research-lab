@@ -147,18 +147,11 @@ model_configs = {
     "gpt-xl (1558M)": {"emb_dim": 1600, "n_layers": 48, "n_heads": 25},
 }
 
-# for size in model_configs:
-#     BASE_CONFIG.update(model_configs[size])
-#     model = GPTModel(BASE_CONFIG).bfloat16()
-#     flops, params = calculate_with_fixed_batch_size(model, batch_size=2)
-#     del model
-#     torch.cuda.empty_cache()
-#     print(f"{size:18}: {flops:.1e} FLOPS; {params/1e6:.1f} M parameters")
-
 for size in model_configs:
     BASE_CONFIG.update(model_configs[size])
     model = GPTModel(BASE_CONFIG).bfloat16()
-    calculate_with_automatic_batch_size(model, config=BASE_CONFIG)
-    # Clean up
+    flops, params = calculate_with_fixed_batch_size(model, batch_size=2)
     del model
     torch.cuda.empty_cache()
+    print(f"{size:18}: {flops:.1e} FLOPS; {params/1e6:.1f} M parameters")
+
