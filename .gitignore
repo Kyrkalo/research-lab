@@ -192,3 +192,7 @@ cython_debug/
 #  refer to https://docs.cursor.com/context/ignore-files
 .cursorignore
 .cursorindexingignore
+/src/blazor/OnnxHub/.vs
+/src/blazor/OnnxHub/OnnxHub/bin/Debug/net8.0
+/src/blazor/OnnxHub/OnnxHub/obj
+/src/blazor/OnnxHub/OnnxHub/OnnxHub.csproj.user
