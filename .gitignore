@@ -195,3 +195,5 @@ cython_debug/
 /src/blazor/OnnxHub/OnnxHub/bin/Debug/net8.0
 /src/blazor/OnnxHub/OnnxHub/obj
 /src/blazor/OnnxHub/OnnxHub/OnnxHub.csproj.user
+/src/pyapi/__pycache__
+/.vs/ai-study/v17
