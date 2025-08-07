@@ -1,6 +1,8 @@
 import torch
 from importlib.metadata import version
 
+from models.Attentions import CausalAttention, MultiHeadAttention, MultiHeadAttentionWrapper, SelfAttention_v1, SelfAttention_v2
+
 print("torch version:", version("torch"))
 
 
@@ -52,3 +54,83 @@ for i,x_i in enumerate(inputs):
 print(context_vec_2)
 
 #3.3.2 Computing attention weights for all input tokens
+#Apply previous step 1 to all pairwise elements to compute the unnormalized attention score matrix:
+attn_scores = torch.empty(6, 6)
+
+for i, x_i in enumerate(inputs):
+    for j, x_j in enumerate(inputs):
+        attn_scores[i, j] = torch.dot(x_i, x_j)
+
+print(attn_scores)
+
+# We can achieve the same as above more efficiently via matrix multiplication:
+attn_scores = inputs @ inputs.T
+print(attn_scores)
+
+# Similar to step 2 previously, we normalize each row so that the values in each row sum to 1:
+attn_weights = torch.softmax(attn_scores, dim=-1)
+print(attn_weights)
+
+# Quick verification that the values in each row indeed sum to 1:
+# print('Quick verification that the values in each row indeed sum to 1:')
+row_2_sum = sum([0.1385, 0.2379, 0.2333, 0.1240, 0.1082, 0.1581])
+# print("Row 2 sum:", row_2_sum)
+
+# print("All row sums:", attn_weights.sum(dim=-1))
+
+# print("Previous 2nd context vector:", context_vec_2)
+
+# 3.4 Implementing self-attention with trainable weights
+batch = torch.stack((inputs, inputs), dim=0)
+
+x_2 = inputs[1] # second input element
+d_in = inputs.shape[1] # the input embedding size, d=3
+d_out = 2 # the output embedding size, d=2
+
+print('Implementing a compact SelfAttention class')
+torch.manual_seed(789)
+sa_v2 = SelfAttention_v2(d_in, d_out)
+print(sa_v2(inputs))
+
+
+# 3.5 Hiding future words with causal attention
+
+# 3.5.2 Masking additional attention weights with dropout
+
+# 3.5.3 Implementing a compact causal self-attention class
+torch.manual_seed(123)
+print('CausalAttention')
+context_length = batch.shape[1]
+ca = CausalAttention(d_in, d_out, context_length, 0.0)
+
+context_vecs = ca(batch)
+
+print(context_vecs)
+print("CausalAttention - context_vecs.shape:", context_vecs.shape)
+
+# 3.6 Extending single-head attention to multi-head attention
+torch.manual_seed(123)
+
+context_length = batch.shape[1] # This is the number of tokens
+d_in, d_out = 3, 2
+print('MultiHeadAttentionWrapper')
+mha = MultiHeadAttentionWrapper(
+    d_in, d_out, context_length, 0.0, num_heads=2
+)
+
+context_vecs = mha(batch)
+
+print(context_vecs)
+print("MultiHeadAttentionWrapper - context_vecs.shape:", context_vecs.shape)
+
+torch.manual_seed(123)
+
+print('MultiHeadAttention')
+batch_size, context_length, d_in = batch.shape
+d_out = 2
+mha = MultiHeadAttention(d_in, d_out, context_length, 0.0, num_heads=2)
+
+context_vecs = mha(batch)
+
+print(context_vecs)
+print("MultiHeadAttention - context_vecs.shape:", context_vecs.shape)
