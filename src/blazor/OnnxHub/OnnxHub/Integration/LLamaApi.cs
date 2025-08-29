@@ -1,43 +1,30 @@
-﻿using System;
+﻿using OnnxHub.Dto;
+using OnnxHub.Dto.LLama32;
+using System;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Threading.Tasks;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace OnnxHub.Integration
 {
-    public class LLamaApi : HttpClient
+    public class LLamaApi : BaseApi
     {
-        private readonly HttpClient _httpClient;
-        private string _model;
 
-        public LLamaApi(HttpClient httpClient, string model)
-        {
-            _httpClient = httpClient;
-            _model = model;
-        }
+        public LLamaApi(HttpClient httpClient) : base(httpClient)
+        { }
 
-        public async Task<string> SendMessageAsync(string prompt, CancellationToken cancellationToken = default)
+        public async Task<string> Generate(string text, CancellationToken ct = default)
         {
-            var payload = new
+            BodyRequest body = new BodyRequest()
             {
-                model = _model,
-                message = new[] 
-                {
-                    new { role = "user", content = prompt }
-                },
-                stream = false
+                Model = "llama3.2",
+                Prompt = text,
             };
-
-            HttpResponseMessage response = await _httpClient.PostAsJsonAsync("message", payload, cancellationToken);
-
-            using var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: cancellationToken);
-
-            return doc.RootElement.GetProperty("message")
-                                  .GetProperty("content")
-                                  .GetString();
+            var result = await PostAsync<BodyResponse>("/api/generate", body, ct);
+            return result.Response;
         }
+
     }
 }
