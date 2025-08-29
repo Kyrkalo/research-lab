@@ -1,14 +1,19 @@
 using OnnxHub.Components;
 using OnnxHub.Infrastructure;
+using OnnxHub.Integration;
 using OnnxHub.Services;
-using System.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var tokenizerApiSettings = builder.Configuration.GetSection("TokenizerApi").Get<TokenizerApiSettings>();
 
-builder.Services.AddHttpClient("Encode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/encode"); });
-builder.Services.AddHttpClient("Decode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/decode"); });
+builder.Services.AddHttpClient<TokenizerApiService>("Encode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/encode"); });
+builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/decode"); });
+
+builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
+    client.BaseAddress = new Uri("http://localhost:11434");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
