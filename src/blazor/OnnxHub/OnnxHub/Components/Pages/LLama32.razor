@@ -19,7 +19,9 @@
     {
         @foreach (var item in _messages)
         {
-            <div><div class="msg">@item</div></div>
+            <div class="@item.CssClass">
+                <div class="msg">@item.Text</div>
+            </div>
         }
     }
     <hr />
@@ -31,7 +33,7 @@
 @code {
     private string _newMessage = string.Empty;
 
-    private readonly List<string> _messages = new();
+    private readonly List<Message> _messages = new();
 
     private async Task GenerateMessage()
     {
@@ -40,14 +42,31 @@
 
         try
         {
+            _messages.Add(new Message()
+            {
+                Text = _newMessage,
+                CssClass = "sent"
+            });
+
             var text = await LlamaApi.Generate(_newMessage);
-            _messages.Add(text);
+            _messages.Add(new Message()
+            {
+                Text = text,
+                CssClass = "received"
+            });
             _newMessage = string.Empty;
             StateHasChanged();       
         }
         catch (Exception ex)
         {
-            _messages.Add($"[error] {ex.Message}");
+            
         }
+    }
+
+    private class Message
+    {
+        public string Text { get; set; }
+
+        public string CssClass { get; set; }
     }
 }
