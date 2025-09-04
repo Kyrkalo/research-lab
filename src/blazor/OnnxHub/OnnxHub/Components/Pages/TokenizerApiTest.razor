@@ -1,0 +1,46 @@
+﻿@page "/tokenizerapitest"
+@using OnnxHub.Services
+@rendermode InteractiveServer
+
+@inject TokenizerApiService tokenizerApiService
+
+<PageTitle>Tokenizer Api Test</PageTitle>
+
+<h3>Tokenizer Api Test</h3>
+
+<div class="mb-3">
+    <label>Input Text</label>
+    <textarea @bind="inputText" class="form-control" rows="3"></textarea>
+</div>
+<button class="btn btn-primary" @onclick="EncodeText">Encode</button>
+
+@if (tokenIds is not null)
+{
+    <p class="mt-3">Tokens: @string.Join(", ", tokenIds)</p>
+    <button class="btn btn-secondary" @onclick="DecodeTokens">Decode</button>
+}
+
+@if (!string.IsNullOrEmpty(decodedText))
+{
+    <p class="mt-3">Decoded Text: <b>@decodedText</b></p>
+}
+
+@code {
+    private string inputText;
+    private long[] tokenIds;
+    private string decodedText;
+
+    private async Task EncodeText()
+    {
+        decodedText = string.Empty;
+        tokenIds = await tokenizerApiService.EncodeAsync(inputText);
+    }
+
+    private async Task DecodeTokens()
+    {
+        if (tokenIds != null && tokenIds.Length > 0)
+        {
+            decodedText = await tokenizerApiService.DecodeAsync(tokenIds);
+        }
+    }
+}

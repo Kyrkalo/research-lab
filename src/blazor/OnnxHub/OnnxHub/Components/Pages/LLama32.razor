@@ -1,0 +1,72 @@
+﻿@page "/llama32"
+
+@using OnnxHub.Dto
+@using OnnxHub.Integration
+
+@rendermode InteractiveServer
+@inject LLamaApi LlamaApi
+
+<PageTitle>llama 3.2</PageTitle>
+
+<h3>llama 3.2</h3>
+
+<div id="scrollbox">
+    @if (_messages.Count == 0)
+    {
+        <div class="text-muted">No messages yet.</div>
+    }
+    else
+    {
+        @foreach (var item in _messages)
+        {
+            <div class="@item.CssClass">
+                <div class="msg">@item.Text</div>
+            </div>
+        }
+    }
+    <hr />
+    <textarea class="input-lg" placeholder="enter your comment" @bind="_newMessage"></textarea>
+</div>
+
+<button class="btn btn-default" @onclick="GenerateMessage">Send</button>
+
+@code {
+    private string _newMessage = string.Empty;
+
+    private readonly List<Message> _messages = new();
+
+    private async Task GenerateMessage()
+    {
+        if (string.IsNullOrWhiteSpace(_newMessage))
+            return;
+
+        try
+        {
+            _messages.Add(new Message()
+            {
+                Text = _newMessage,
+                CssClass = "sent"
+            });
+
+            var text = await LlamaApi.Generate(_newMessage);
+            _messages.Add(new Message()
+            {
+                Text = text,
+                CssClass = "received"
+            });
+            _newMessage = string.Empty;
+            StateHasChanged();       
+        }
+        catch (Exception ex)
+        {
+            
+        }
+    }
+
+    private class Message
+    {
+        public string Text { get; set; }
+
+        public string CssClass { get; set; }
+    }
+}
