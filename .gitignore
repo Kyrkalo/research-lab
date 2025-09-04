@@ -197,3 +197,9 @@ cython_debug/
 /src/blazor/OnnxHub/OnnxHub/OnnxHub.csproj.user
 /src/pyapi/__pycache__
 /.vs/ai-study/v17
+/.vs/VSWorkspaceState.json
+/src/pytorch/dataloaders/__pycache__/mnistDataLoader.cpython-313.pyc
+/src/pytorch/models/__pycache__/mdl_mnist_202520.cpython-313.pyc
+/src/pytorch/models/__pycache__/__init__.cpython-313.pyc
+/src/pytorch/results/data/MNIST/raw
+/src/pytorch/__pycache__
