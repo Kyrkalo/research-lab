@@ -1,4 +1,14 @@
-﻿<h3>MNIST</h3>
+﻿@page "/mnist"
+@rendermode InteractiveServer
+
+@using OnnxHub.Onnx
+
+@inject IModelRegistry modelRegistry
+
+<PageTitle>MNIST</PageTitle>
+
+<h3>MNIST</h3>
+
 
 @code {
 

@@ -3,6 +3,7 @@ using OnnxHub.Components;
 using OnnxHub.Infrastructure;
 using OnnxHub.Integration;
 using OnnxHub.Onnx;
+using OnnxHub.Onnx.Converter;
 using OnnxHub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,11 +29,9 @@ builder.Services.AddSingleton<IModelRegistry>(e =>
 
     sessionOptions.AppendExecutionProvider_CUDA(); // for Microsoft.ML.OnnxRuntime.Gpu
 
-    var dict = new Dictionary<string, InferenceSession>(StringComparer.OrdinalIgnoreCase)
-    {
-        ["mdl_mnist_202520"] = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions),
-    };
-    return new ModelRegistry(dict);
+    var mdl_mnist_202520 = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions);
+
+    return new ModelRegistry().Add("mdl_mnist_202520", mdl_mnist_202520, new MnistImageConverter());
 });
 
 builder.Services.AddRazorComponents()
