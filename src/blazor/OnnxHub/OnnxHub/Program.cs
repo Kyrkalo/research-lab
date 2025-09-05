@@ -1,6 +1,8 @@
+using Microsoft.ML.OnnxRuntime;
 using OnnxHub.Components;
 using OnnxHub.Infrastructure;
 using OnnxHub.Integration;
+using OnnxHub.Onnx;
 using OnnxHub.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +15,24 @@ builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client
 builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
     client.BaseAddress = new Uri("http://localhost:11434");
     client.Timeout = TimeSpan.FromSeconds(30);
+});
+
+builder.Services.AddSingleton<IModelRegistry>(e =>
+{
+    var sessionOptions = new Microsoft.ML.OnnxRuntime.SessionOptions() 
+    {
+        GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL,
+        EnableMemoryPattern = true,
+        ExecutionMode = ExecutionMode.ORT_PARALLEL
+    };
+
+    sessionOptions.AppendExecutionProvider_CUDA(); // for Microsoft.ML.OnnxRuntime.Gpu
+
+    var dict = new Dictionary<string, InferenceSession>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["mdl_mnist_202520"] = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions),
+    };
+    return new ModelRegistry(dict);
 });
 
 builder.Services.AddRazorComponents()

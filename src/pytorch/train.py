@@ -12,21 +12,8 @@ class MNISTTrainer:
         self.train_losses = []
         self.train_counter = []
         self.device = config["device"]
-
-    import torch
-import torch.nn.functional as F
-import os
-from pathlib import Path
-
-class MNISTTrainer:
-    def __init__(self, model, optimizer, train_loader, config):
-        self.model = model
-        self.train_loader = train_loader
-        self.optimizer = optimizer
-        self.log_interval = config["log_interval"]
-        self.train_losses = []
-        self.train_counter = []
-        self.device = config["device"]
+        self.model_name = config["model_name"] if "model_name" in config else "mnist_model"
+        self.optimizer_name = config["optimizer_name"] if "optimizer_name" in config else "mnist_optimizer"
 
     def train(self, epoch):
         self.model.train()
@@ -56,8 +43,8 @@ class MNISTTrainer:
                 
                 self.train_counter.append(seen + ((epoch - 1) * len(self.train_loader.dataset)))
 
-                torch.save(self.model.state_dict(), "model.pth")
-                torch.save(self.optimizer.state_dict(), "optimizer.pth")
+                torch.save(self.model.state_dict(), self.model_name + ".pth")
+                torch.save(self.optimizer.state_dict(), self.optimizer_name + ".pth")
 
         avg_loss = running_loss / len(self.train_loader)
         print(f"===> Epoch {epoch} Average training loss: {avg_loss:.6f}")
