@@ -203,3 +203,4 @@ cython_debug/
 /src/pytorch/models/__pycache__/__init__.cpython-313.pyc
 /src/pytorch/results/data/MNIST/raw
 /src/pytorch/__pycache__
+/src/pytorch/pipelines/__pycache__
