@@ -1,3 +1,4 @@
+
 import torch
 from pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
 
@@ -22,6 +23,7 @@ mnist_pipeline.setup().run()
 
 export_to_onnx = MnistExportOnnx(mnist_config)
 export_to_onnx.setup().run()
+
 
 # train_losses, train_counter = train.get_train_stats()
 # test_losses, test_counter = test.get_test_stats()

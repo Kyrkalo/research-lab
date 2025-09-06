@@ -12,6 +12,7 @@ var tokenizerApiSettings = builder.Configuration.GetSection("TokenizerApi").Get<
 
 builder.Services.AddHttpClient<TokenizerApiService>("Encode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/encode"); });
 builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/decode"); });
+builder.Services.AddSingleton<IToTensorConverter, MnistImageConverter>();
 
 builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
     client.BaseAddress = new Uri("http://localhost:11434");
@@ -27,7 +28,7 @@ builder.Services.AddSingleton<IModelRegistry>(e =>
         ExecutionMode = ExecutionMode.ORT_PARALLEL
     };
 
-    sessionOptions.AppendExecutionProvider_CUDA(); // for Microsoft.ML.OnnxRuntime.Gpu
+    //sessionOptions.AppendExecutionProvider_CUDA(); // for Microsoft.ML.OnnxRuntime.Gpu
 
     var mdl_mnist_202520 = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions);
 
@@ -38,6 +39,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<TokenizerApiService>();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
@@ -50,6 +52,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapControllers();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
