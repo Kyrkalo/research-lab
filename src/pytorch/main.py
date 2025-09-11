@@ -7,15 +7,15 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 mnist_config = {
     "learning_rate": 0.01,
     "momentum": 0.5,
-    "n_epochs": 50,
+    "n_epochs": 20,
     "batch_size_train": 128,
     "batch_size_test": 1000,
     "log_interval": 10,
     "random_seed": 1,
     "device": device,
     "data_dir": "./data",
-    "model_name": "mdl_mnist_202520",
-    "optimizer_name": "mdl_mnist_202520_optimizer",
+    "model_name": "Mdl_mnist_2025_2",
+    "optimizer_name": "Mdl_mnist_2025_2_optimizer",
 }
 
 mnist_pipeline = MnistPipeline(mnist_config)

@@ -1,5 +1,5 @@
 from dataloaders.mnistDataLoader import MnistDataLoader
-from models.mdl_mnist_202520 import Mdl_mnist_202520
+from models.mdl_mnist_202520 import Mdl_mnist_202520, Mdl_mnist_2025_2
 from test import MNISTTester
 from train import MNISTTrainer
 import torch.optim as optim
@@ -15,7 +15,7 @@ class MnistPipeline:
         pass
 
     def setup(self):
-        self.model = Mdl_mnist_202520()
+        self.model = Mdl_mnist_2025_2()
         self.model.to(self.device)
 
         self.optimizer = optim.SGD(self.model.parameters(), lr=self.mnist_config["learning_rate"], momentum=self.mnist_config["momentum"])
@@ -55,7 +55,7 @@ class MnistExportOnnx():
         self.mnist_config = config if config else self.mnist_config
 
     def setup(self):
-        self.model = Mdl_mnist_202520().to(self.device)
+        self.model = Mdl_mnist_2025_2().to(self.device)
         self.model.load_state_dict(torch.load(self.mnist_config["model_name"] + ".pth", map_location=self.device))
         self.model.eval()
         return self
