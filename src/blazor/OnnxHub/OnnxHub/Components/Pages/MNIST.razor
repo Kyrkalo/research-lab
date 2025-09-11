@@ -7,12 +7,17 @@
 
 <h3>MNIST</h3>
 
-<h1>Draw a digit</h1>
-<canvas id="canvas" width="280" height="280"></canvas>
-<br>
-<button onclick="clearCanvas()">Clear</button>
-<button onclick="sendImage()">Predict</button>
-<p id="result"></p>
+<div style="
+    text-align: center;">
+    <div>
+        <h1>Draw a digit</h1>
+        <canvas id="canvas" width="280" height="280"></canvas>
+        <br>
+        <button onclick="clearCanvas()">Clear</button>
+        <button onclick="sendImage()">Predict</button>
+        <p id="result"></p>
+    </div>
+</div>
 
 @code {
 
@@ -36,7 +41,7 @@
 
         function draw(e) {
             if (!painting) return;
-            ctx.lineWidth = 40;
+            ctx.lineWidth = 35;
             ctx.lineCap = 'round';
             ctx.strokeStyle = 'black';
 
