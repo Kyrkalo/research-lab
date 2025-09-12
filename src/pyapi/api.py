@@ -1,28 +1,73 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from typing import List
-import tiktoken
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+from PIL import Image, ImageOps
+from src.pytorch.models.mdl_mnist_202520 import Mdl_mnist_202520
+import torch
+import torchvision.transforms as transforms
+import matplotlib.pyplot as plt
 
-app = FastAPI()
-tokenizer = tiktoken.get_encoding("gpt2")
+app = Flask(__name__)
+CORS(app)  # ✅ Allow all origins by default
+
+# Load model
+model = Mdl_mnist_202520()
+model.load_state_dict(torch.load("model.pth", map_location=torch.device('cpu')))
+model.eval()
+
+# Define image transform
+transform = transforms.Compose([
+    transforms.Grayscale(num_output_channels=1),
+    transforms.Resize((28, 28)),
+    transforms.ToTensor()
+])
+
+from PIL import Image, ImageOps
+
+def preprocess_image(file):
+    # Load image
+    image = Image.open(file)
+
+    # If image has alpha channel, composite on white background to remove transparency
+    if image.mode in ('RGBA', 'LA') or (image.mode == 'P' and 'transparency' in image.info):
+        background = Image.new('RGBA', image.size, (255, 255, 255, 255))  # white background
+        background.paste(image, mask=image.split()[-1])  # paste using alpha channel as mask
+        image = background.convert('RGB')  # convert to RGB without alpha
+
+    # Convert to grayscale
+    image = image.convert('L')
+
+    # Invert colors: make background white and digit black
+    image = ImageOps.invert(image)
+
+    # Resize to 28x28 (model input size)
+    image = image.resize((28, 28))
+
+    # plt.imshow(image, cmap='gray')
+    # plt.show()
+    # Convert to tensor and normalize (if you want, otherwise just ToTensor)
+    image = transform(image).unsqueeze(0)
+
+    return image
 
 
-class EncodeRequest(BaseModel):
-    text: str
 
+def predict_digit(image_tensor):
+    """Run prediction on image tensor using the loaded model."""
+    with torch.no_grad():
+        outputs = model(image_tensor)
+        _, predicted = torch.max(outputs.data, 1)
+        return predicted.item()
 
-class DecodeRequest(BaseModel):
-    tokens: List[int]
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        file = request.files['image']
+        image_tensor = preprocess_image(file)
+        print("Image shape:", image_tensor.shape)
+        prediction = predict_digit(image_tensor)
+        return jsonify({'prediction': prediction})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 400
 
-
-@app.post("/encode")
-def encode_text(req: EncodeRequest):
-    ids = tokenizer.encode(req.text)
-    return {"tokens": ids}
-
-
-@app.post("/decode")
-def decode_tokens(req: DecodeRequest):
-    text = tokenizer.decode(req.tokens)
-    return {"text": text}
-# uvicorn api:app --host 127.0.0.1 --port 8000
+if __name__ == '__main__':
+    app.run(debug=True)
