@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-class Generator(nn.Module):
+class GanGenerator(nn.Module):
     def __init__(self, config):
         super(Generator, self).__init__()
         self.ngpu = config["ngpu"]
@@ -34,7 +34,7 @@ class Generator(nn.Module):
     def forward(self, input):
         return self.main(input)
     
-class Discriminator(nn.Module):
+class GanDiscriminator(nn.Module):
     def __init__(self, config):
         super(Discriminator, self).__init__()
         self.ngpu = config["ngpu"]
@@ -63,3 +63,11 @@ class Discriminator(nn.Module):
 
     def forward(self, input):
         return self.main(input)
+    
+def weights_init(m):
+    classname = m.__class__.__name__
+    if classname.find('Conv') != -1:
+        nn.init.normal_(m.weight.data, 0.0, 0.02)
+    elif classname.find('BatchNorm') != -1:
+        nn.init.normal_(m.weight.data, 1.0, 0.02)
+        nn.init.constant_(m.bias.data, 0)
