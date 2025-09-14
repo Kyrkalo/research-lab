@@ -1,7 +1,7 @@
 from dataloaders.mnistDataLoader import MnistDataLoader
 from models.mdl_mnist_202520 import Mdl_mnist_202520, Mdl_mnist_2025_2
-from test import MNISTTester
-from train import MNISTTrainer
+from pytorch.testers.mnsitTestes import MNISTTester
+from src.pytorch.trainers.mnistTrainers import MNISTTrainer
 import torch.optim as optim
 import torch
 from pathlib import Path
