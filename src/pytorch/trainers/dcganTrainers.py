@@ -34,7 +34,7 @@ class DCGANTrainer:
             # Format batch
             real_cpu = data[0].to(self.device)
             b_size = real_cpu.size(0)
-            label = torch.full((b_size,), real_label, dtype=torch.float, device=self.device)
+            label = torch.full((b_size,), self.real_label, dtype=torch.float, device=self.device)
             # Forward pass real batch through D
             output = self.modelD(real_cpu).view(-1)
             # Calculate loss on all-real batch
@@ -48,7 +48,7 @@ class DCGANTrainer:
             noise = torch.randn(b_size, self.configs["nz"], 1, 1, device=self.device)
             # Generate fake image batch with G
             fake = self.modelG(noise)
-            label.fill_(fake_label)
+            label.fill_(self.fake_label)
             # Classify all fake batch with D
             output = self.modelD(fake.detach()).view(-1)
             # Calculate D's loss on the all-fake batch
@@ -65,7 +65,7 @@ class DCGANTrainer:
             # (2) Update G network: maximize log(D(G(z)))
             ###########################
             self.modelG.zero_grad()
-            label.fill_(real_label)  # fake labels are real for generator cost
+            label.fill_(self.real_label)  # fake labels are real for generator cost
             # Since we just updated D, perform another forward pass of all-fake batch through D
             output = self.modelD(fake).view(-1)
             # Calculate G's loss based on this output
@@ -83,13 +83,13 @@ class DCGANTrainer:
                         errD.item(), errG.item(), D_x, D_G_z1, D_G_z2))
 
             # Save Losses for plotting later
-            G_losses.append(errG.item())
-            D_losses.append(errD.item())
+            self.G_losses.append(errG.item())
+            self.D_losses.append(errD.item())
 
             # Check how the generator is doing by saving G's output on fixed_noise
-            if (iters % 500 == 0) or ((epoch == self.configs["num_epochs"]-1) and (i == len(self.dataloader)-1)):
+            if (self.iters % 500 == 0) or ((epoch == self.configs["num_epochs"]-1) and (i == len(self.dataloader)-1)):
                 with torch.no_grad():
-                    fake = self.modelG(fixed_noise).detach().cpu()
-                img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
+                    fake = self.modelG(self.fixed_noise).detach().cpu()
+                self.img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
-            iters += 1
+            self.iters += 1

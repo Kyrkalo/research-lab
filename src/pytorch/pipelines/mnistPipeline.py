@@ -1,10 +1,12 @@
-from dataloaders.mnistDataLoader import MnistDataLoader
-from models.mdl_mnist_202520 import Mdl_mnist_202520, Mdl_mnist_2025_2
-from pytorch.testers.mnsitTestes import MNISTTester
-from src.pytorch.trainers.mnistTrainers import MNISTTrainer
-import torch.optim as optim
 import torch
+import torch.optim as optim
+from src.pytorch.dataloaders.mnistDataLoader import MnistDataLoader
 from pathlib import Path
+
+from src.pytorch.testers.mnsitTestes import MNISTTester
+from src.pytorch.trainers.mnistTrainers import MNISTTrainer
+from src.pytorch.models.mdl_mnist_202520 import Mdl_mnist_202520
+
 
 
 class MnistPipeline:
@@ -15,7 +17,7 @@ class MnistPipeline:
         pass
 
     def setup(self):
-        self.model = Mdl_mnist_2025_2()
+        self.model = Mdl_mnist_202520()
         self.model.to(self.device)
 
         self.optimizer = optim.SGD(self.model.parameters(), lr=self.mnist_config["learning_rate"], momentum=self.mnist_config["momentum"])

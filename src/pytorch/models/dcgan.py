@@ -3,7 +3,7 @@ import torch.nn as nn
 
 class GanGenerator(nn.Module):
     def __init__(self, config):
-        super(Generator, self).__init__()
+        super(GanGenerator, self).__init__()
         self.ngpu = config["ngpu"]
         ngf = config["ngf"]
         nz = config["nz"]
@@ -36,7 +36,7 @@ class GanGenerator(nn.Module):
     
 class GanDiscriminator(nn.Module):
     def __init__(self, config):
-        super(Discriminator, self).__init__()
+        super(GanDiscriminator, self).__init__()
         self.ngpu = config["ngpu"]
         nc = config["nc"]
         ndf = config["ndf"]
