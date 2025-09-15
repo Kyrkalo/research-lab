@@ -2,8 +2,8 @@ from src.pytorch.trainers.dcganTrainers import DCGANTrainer
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from pytorch.models.dcgan import GanDiscriminator, GanGenerator, weights_init
-from pytorch.dataloaders.dcganDataLoader import DcganDataLoader
+from src.pytorch.models.dcgan import GanDiscriminator, GanGenerator, weights_init
+from src.pytorch.dataloaders.dcganDataLoader import DcganDataLoader
 
 class DcganPipeline:
     

@@ -1,3 +1,4 @@
+import os
 import torch
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
@@ -11,11 +12,15 @@ class DcganDataLoader:
         pass
 
     def Get(self):
+
+        if not os.path.exists(self.dataroot):
+            os.makedirs(self.dataroot, exist_ok=True)
+            
         # We can use an image folder dataset the way we have it setup.
         # Create the dataset
         dataset = dset.ImageFolder(root=self.dataroot,
                                 transform=transforms.Compose([
-                                    transforms.Resize(self),
+                                    transforms.Resize(self.image_size),
                                     transforms.CenterCrop(self.image_size),
                                     transforms.ToTensor(),
                                     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
