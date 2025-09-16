@@ -2,7 +2,7 @@
 from enum import Enum
 import torch
 from src.pytorch.pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
-from src.pytorch.pipelines.dcganPipeline import DcganPipeline
+from src.pytorch.pipelines.dcganPipeline import DcganExportOnnx, DcganPipeline
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -39,7 +39,8 @@ configs = {
         "lr": 0.0002,
         "beta1": 0.5,
         "ngpu": 1, # Number of GPUs available. Use 0 for CPU mode.
-        "random_seed": 999
+        "random_seed": 999,
+        "model_name": "dcgan_model_faces",
     }
 }
 
@@ -57,4 +58,7 @@ def run(modeltype: ModelTypes):
     elif modeltype == ModelTypes.DCGAN:
         dcgan_pipeline = DcganPipeline(configs["dcgan"])
         dcgan_pipeline.setup().run()
+
+        export_to_onnx = DcganExportOnnx(configs["dcgan"])
+        export_to_onnx.setup().run()
     pass
