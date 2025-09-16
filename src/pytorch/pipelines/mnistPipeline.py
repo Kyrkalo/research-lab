@@ -57,7 +57,7 @@ class MnistExportOnnx():
         self.mnist_config = config if config else self.mnist_config
 
     def setup(self):
-        self.model = Mdl_mnist_2025_2().to(self.device)
+        self.model = Mdl_mnist_202520().to(self.device)
         self.model.load_state_dict(torch.load(self.mnist_config["model_name"] + ".pth", map_location=self.device))
         self.model.eval()
         return self

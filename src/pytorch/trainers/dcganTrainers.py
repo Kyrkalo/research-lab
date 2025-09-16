@@ -93,3 +93,6 @@ class DCGANTrainer:
                 self.img_list.append(vutils.make_grid(fake, padding=2, normalize=True))
 
             self.iters += 1
+
+        torch.save(self.modelG.state_dict(), self.configs["model_name"] + "_G.pth")
+        torch.save(self.modelD.state_dict(), self.configs["model_name"] + "_D.pth")
