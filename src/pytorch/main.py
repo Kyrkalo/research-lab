@@ -44,9 +44,6 @@ configs = {
     }
 }
 
-
-
-
 def run(modeltype: ModelTypes):
     if modeltype == ModelTypes.MNIST:
         mnist_pipeline = MnistPipeline(configs["mnist"])
