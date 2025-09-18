@@ -13,6 +13,7 @@ var tokenizerApiSettings = builder.Configuration.GetSection("TokenizerApi").Get<
 builder.Services.AddHttpClient<TokenizerApiService>("Encode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/encode"); });
 builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/decode"); });
 builder.Services.AddSingleton<IToTensorConverter, MnistImageConverter>();
+builder.Services.AddTransient<GanGeneratorService>();
 
 builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
     client.BaseAddress = new Uri("http://localhost:11434");
@@ -28,11 +29,12 @@ builder.Services.AddSingleton<IModelRegistry>(e =>
         ExecutionMode = ExecutionMode.ORT_PARALLEL
     };
 
-    //sessionOptions.AppendExecutionProvider_CUDA(); // for Microsoft.ML.OnnxRuntime.Gpu
-
     var mdl_mnist_202520 = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions);
+    var gen = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "generator.onnx"), sessionOptions);
 
-    return new ModelRegistry().Add("mdl_mnist_202520", mdl_mnist_202520, new MnistImageConverter());
+    return new ModelRegistry()
+    .Add("mdl_mnist_202520", mdl_mnist_202520, new MnistImageConverter())
+    .Add("gen_faces", gen, new GanConverter());
 });
 
 builder.Services.AddRazorComponents()
