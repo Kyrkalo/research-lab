@@ -22,7 +22,10 @@ public class GanConverter : IToTensorConverter
             float n0 = (float)(r * Math.Cos(th));
             float n1 = (float)(r * Math.Sin(th));
             span[i++] = n0;
-            if (i < span.Length) span[i++] = n1;
+            if (i < span.Length)
+            {
+                span[i++] = n1;
+            }
         }
     }
 

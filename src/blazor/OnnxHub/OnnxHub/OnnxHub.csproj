@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Onnx\Models\generator.onnx" />
     <None Remove="Onnx\Models\mdl_mnist_202520.onnx" />
   </ItemGroup>
 
@@ -19,6 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Onnx\Models\generator.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
     <EmbeddedResource Include="Onnx\Models\mdl_mnist_202520.onnx">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>

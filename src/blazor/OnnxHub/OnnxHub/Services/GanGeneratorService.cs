@@ -14,7 +14,9 @@ public class GanGeneratorService
 
     public GanGeneratorService(IModelRegistry modelRegistry) 
     {
-        modelRegistry.TryGet("gen", out InferenceSession _session, out IToTensorConverter _converter);
+        modelRegistry.TryGet("gen_faces", out InferenceSession session, out IToTensorConverter converter);
+        _session = session;
+        _converter = converter;
     }
 
     public async Task<List<string>> Generate()
