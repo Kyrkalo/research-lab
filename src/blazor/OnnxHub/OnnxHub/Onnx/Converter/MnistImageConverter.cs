@@ -21,7 +21,6 @@ public class MnistImageConverter : IToTensorConverter
         if (HasAlpha(img))
         {
             using var white = new Image<Rgba32>(img.Width, img.Height, new Rgba32(255, 255, 255, 255));
-            // draw original on white background
             white.Mutate(x => x.DrawImage(img, 1f));
             img.Mutate(x => x.DrawImage(white, 1f));
         }
@@ -70,5 +69,10 @@ public class MnistImageConverter : IToTensorConverter
             }
         });
         return hasAlpha;
+    }
+
+    public DenseTensor<float> Convert(int[] bytes)
+    {
+        throw new NotImplementedException();
     }
 }

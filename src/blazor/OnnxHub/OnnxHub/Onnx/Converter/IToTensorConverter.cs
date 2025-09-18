@@ -5,4 +5,5 @@ namespace OnnxHub.Onnx.Converter;
 public interface IToTensorConverter
 {
     DenseTensor<float> Convert(byte[] bytes);
+    DenseTensor<float> Convert(int[] bytes);
 }

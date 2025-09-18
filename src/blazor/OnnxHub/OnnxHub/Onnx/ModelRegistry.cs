@@ -5,13 +5,19 @@ namespace OnnxHub.Onnx;
 
 public sealed class ModelRegistry : IModelRegistry, IDisposable
 {
-    private sealed record Entry(InferenceSession Session, IToTensorConverter Converter);
+    private sealed record Entry(InferenceSession Session, IToTensorConverter Converter = null);
 
     private readonly Dictionary<string, Entry> _map = new(StringComparer.OrdinalIgnoreCase);
 
     public ModelRegistry Add(string name, InferenceSession session, IToTensorConverter converter)
     {
         _map[name] = new Entry(session, converter);
+        return this;
+    }
+
+    public ModelRegistry Add(string name, InferenceSession session)
+    {
+        _map[name] = new Entry(session);
         return this;
     }
 
