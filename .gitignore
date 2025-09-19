@@ -213,3 +213,4 @@ cython_debug/
 /src/notebook/artifacts
 /src/notebook/checkpoints
 /src/notebook/ImageFolder/data/celeba/img_align_celeba
+/src/notebook/__pycache__
