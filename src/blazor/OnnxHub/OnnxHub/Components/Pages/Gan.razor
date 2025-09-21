@@ -1,0 +1,49 @@
+﻿@page "/gan"
+@using OnnxHub.Onnx
+@using OnnxHub.Services
+@rendermode InteractiveServer
+
+@inject GanGeneratorService _ganGeneratorService
+
+<h3>DCGAN Face Generator (ONNX)</h3>
+
+<div class="mb-3">
+    <label>Batch:</label>
+    <input type="number" min="1" max="16" @bind="batch" />
+    <button class="btn btn-primary ms-3" @onclick="Generate" disabled="@busy">
+        @(busy ? "Generating..." : "Generate")
+    </button>
+</div>
+
+@if (images is { Count: > 0 })
+{
+    <div class="row">
+        @foreach (var b64 in images)
+        {
+            <div class="col-auto mb-3">
+                <img src="data:image/png;base64,@b64" width="128" height="128" />
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private int batch = 4;
+    private bool busy = false;
+    private List<string> images;
+
+    private async Task Generate()
+    {
+        busy = true; 
+        StateHasChanged();
+
+        try
+        {
+            images = await _ganGeneratorService.Generate(); 
+        }
+        finally 
+        { 
+            busy = false;
+        }
+    }
+}

@@ -7,8 +7,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Onnx\Models\generator.onnx" />
+    <None Remove="Onnx\Models\mdl_mnist_202520.onnx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.22.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="Tokenizer" Version="2.2.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Onnx\Models\generator.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Onnx\Models\mdl_mnist_202520.onnx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

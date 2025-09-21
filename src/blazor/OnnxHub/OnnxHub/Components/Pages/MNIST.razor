@@ -1,0 +1,104 @@
+﻿@page "/mnist"
+<PageTitle>MNIST</PageTitle>
+
+@rendermode InteractiveServer
+@inject IJSRuntime JS
+
+@using OnnxHub.Onnx
+
+<h3>MNIST</h3>
+
+<div style="
+    text-align: center;">
+    <div>
+        <h1>Draw a digit</h1>
+        <canvas id="canvas" width="280" height="280"></canvas>
+        <br>
+        <button class="btn btn-light" @onclick="ClearImage">Clear</button>
+        <button class="btn btn-primary" @onclick="Predict">Predict</button>
+        <p id="result"></p>
+    </div>
+</div>
+
+@code {
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await JS.InvokeAsync<object>("window.initPage", DotNetObjectReference.Create(this));
+
+        await base.OnInitializedAsync();
+    }
+
+    private async Task ClearImage()
+    {
+        await JS.InvokeAsync<object>("window.clearImage", DotNetObjectReference.Create(this));
+    }
+
+    private async Task Predict()
+    {
+        await JS.InvokeAsync<object>("window.predict", DotNetObjectReference.Create(this));
+    }
+}
+
+<script>
+
+    window.clearImage = function() {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    window.predict = function() {
+        const canvas = document.getElementById('canvas');
+
+        canvas.toBlob(function(blob) {
+
+            const dataUrl = canvas.toDataURL('image/png'); // "data:image/png;base64,...."
+            fetch('https://localhost:7291/api/mnist', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_base64: dataUrl })
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('result').textContent = "Prediction: " + data;
+            })
+            .catch(err => console.error(err));
+        });
+    }
+
+    window.initPage = function() {
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let painting = false;
+
+        function startPosition(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function endPosition() {
+            painting = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+            ctx.lineWidth = 35;
+            ctx.lineCap = 'round';
+            ctx.strokeStyle = 'black';
+
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        canvas.addEventListener('mousedown', startPosition);
+        canvas.addEventListener('mouseup', endPosition);
+        canvas.addEventListener('mousemove', draw);
+    }
+
+</script>

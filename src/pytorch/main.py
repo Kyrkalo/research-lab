@@ -1,56 +1,61 @@
-from dataloaders.mnistDataLoader import MnistDataLoader
-from models.mdl_mnist_202520 import Mdl_mnist_202520
-from test import MNISTTester
-from train import MNISTTrainer
-import torch.optim as optim
-import matplotlib.pyplot as plt
+
+from enum import Enum
 import torch
+from src.pytorch.pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
+from src.pytorch.pipelines.dcganPipeline import DcganExportOnnx, DcganPipeline
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+class ModelTypes(Enum):
+    MNIST = "mnist"
+    DCGAN = "dcgan"
 
 
-if torch.cuda.is_available():
-    device = torch.device("cuda")
-else:
-    device = torch.device("cpu")
-
-model = Mdl_mnist_202520()
-model.to(device)
-
-mnist_config = {
-    "learning_rate": 0.01,
-    "momentum": 0.5,
-    "n_epochs": 100,
-    "batch_size_train": 128,
-    "batch_size_test": 1000,
-    "log_interval": 10,
-    "random_seed": 1,
-    "device": device,
-    "data_dir": "./data"
+configs = {
+    "mnist": {
+        "learning_rate": 0.01,
+        "momentum": 0.5,
+        "n_epochs": 20,
+        "batch_size_train": 128,
+        "batch_size_test": 1000,
+        "log_interval": 10,
+        "random_seed": 1,
+        "device": device,
+        "data_dir": "./data",
+        "model_name": "Mdl_mnist_2025_2",
+        "optimizer_name": "Mdl_mnist_2025_2_optimizer",
+    },
+    "dcgan": {
+        "device": device,
+        "dataroot": "C://Users/RomanKyrkalo/source/repos/ai-study/src/notebook/ImageFolder/data/celeba",
+        "workers": 2,
+        "batch_size": 256,
+        "image_size": 64,
+        "nc": 3, # Number of channels in the training images. For color images this is 3
+        "nz": 100, # Size of z latent vector (i.e. size of generator input)
+        "ngf": 64, # Size of feature maps in generator
+        "ndf": 64,
+        "num_epochs": 1,
+        "lr": 0.0002,
+        "beta1": 0.5,
+        "ngpu": 1, # Number of GPUs available. Use 0 for CPU mode.
+        "random_seed": 999,
+        "model_name": "dcgan_model_faces",
+    }
 }
 
-print("Using device:", device)
+def run(modeltype: ModelTypes):
+    if modeltype == ModelTypes.MNIST:
+        mnist_pipeline = MnistPipeline(configs["mnist"])
+        mnist_pipeline.setup().run()
 
-torch.backends.cudnn.enabled = False
-torch.manual_seed(mnist_config["random_seed"])
+        export_to_onnx = MnistExportOnnx(configs["mnist"])
+        export_to_onnx.setup().run()
 
-print("setup MNIST data loader")
-train_loader, test_loader = MnistDataLoader(mnist_config).Get()
-optimizer = optim.SGD(model.parameters(), lr=mnist_config["learning_rate"], momentum=mnist_config["momentum"])
+    elif modeltype == ModelTypes.DCGAN:
+        dcgan_pipeline = DcganPipeline(configs["dcgan"])
+        dcgan_pipeline.setup().run()
 
-train = MNISTTrainer(model, optimizer, train_loader, mnist_config)
-test = MNISTTester(model, test_loader, device)
-
-print("Start training")
-for epoch in range(1, mnist_config["n_epochs"] + 1):
-    train.train(epoch)
-    test.test(epoch)
-
-# train_losses, train_counter = train.get_train_stats()
-# test_losses, test_counter = test.get_test_stats()
-
-# fig = plt.figure()
-# plt.plot(train_counter, train_losses, color='blue')
-# plt.scatter(test_counter, test_losses, color='red')
-# plt.legend(['Train Loss', 'Test Loss'], loc='upper right')
-# plt.xlabel('number of training examples seen')
-# plt.ylabel('negative log likelihood loss')
-# fig
+        export_to_onnx = DcganExportOnnx(configs["dcgan"])
+        export_to_onnx.setup().run()
+    pass
