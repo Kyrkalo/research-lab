@@ -41,6 +41,12 @@ configs = {
         "ngpu": 1, # Number of GPUs available. Use 0 for CPU mode.
         "random_seed": 999,
         "model_name": "dcgan_model_faces",
+    },
+    "rCnn": {
+        "device": device,
+        "out_channels": 1280,
+        "num_classes": 2,
+        "data_root": "data/PennFudanPed",
     }
 }
 
