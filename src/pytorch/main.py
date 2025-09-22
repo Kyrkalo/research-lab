@@ -1,14 +1,17 @@
 
 from enum import Enum
 import torch
+from src.pytorch.exporters.dcganExportOnnx import DcganExportOnnx
 from src.pytorch.pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
-from src.pytorch.pipelines.dcganPipeline import DcganExportOnnx, DcganPipeline
+from src.pytorch.pipelines.dcganPipeline import DcganPipeline
+from src.pytorch.pipelines.rCnnPipeline import RCnnPipeline
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class ModelTypes(Enum):
     MNIST = "mnist"
     DCGAN = "dcgan"
+    RCNN = "rCnn"
 
 
 configs = {
@@ -47,6 +50,9 @@ configs = {
         "out_channels": 1280,
         "num_classes": 2,
         "data_root": "data/PennFudanPed",
+        "model_name": "rCnn_model_pedestrian",
+        "learning_rate": 0.005,
+        "num_epochs": 10,
     }
 }
 
@@ -64,4 +70,8 @@ def run(modeltype: ModelTypes):
 
         export_to_onnx = DcganExportOnnx(configs["dcgan"])
         export_to_onnx.setup().run()
+
+    elif modeltype == ModelTypes.RCNN:
+        rcnn_pipeline = RCnnPipeline(configs["rCnn"])
+        rcnn_pipeline.setup().run()
     pass
