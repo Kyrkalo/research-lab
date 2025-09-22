@@ -1,8 +1,9 @@
 import torch
 from anyio import Path
 import torchvision
+from src.pytorch.exporters.exporter import Exporter
 
-class RCNNExportOnnx():
+class RCNNExportOnnx(Exporter):
 
     def __init__(self, config=None):
         self.config = config
@@ -25,7 +26,7 @@ class RCNNExportOnnx():
             'scores': {0: 'num_detections'}
         }
 
-        path = Path(self.dcgan_config["model_name"] + ".onnx")
+        path = super().getPath("onnx")
         
         torch.onnx.export(
             self.model, 
