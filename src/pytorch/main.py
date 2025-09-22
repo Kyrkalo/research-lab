@@ -2,6 +2,7 @@
 from enum import Enum
 import torch
 from src.pytorch.exporters.dcganExportOnnx import DcganExportOnnx
+from src.pytorch.exporters.rCnnExportOnnx import RCNNExportOnnx
 from src.pytorch.pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
 from src.pytorch.pipelines.dcganPipeline import DcganPipeline
 from src.pytorch.pipelines.rCnnPipeline import RCnnPipeline
@@ -52,7 +53,7 @@ configs = {
         "data_root": "data/PennFudanPed",
         "model_name": "rCnn_model_pedestrian",
         "learning_rate": 0.005,
-        "num_epochs": 10,
+        "num_epochs": 1,
     }
 }
 
@@ -74,4 +75,7 @@ def run(modeltype: ModelTypes):
     elif modeltype == ModelTypes.RCNN:
         rcnn_pipeline = RCnnPipeline(configs["rCnn"])
         rcnn_pipeline.setup().run()
+
+        export_to_onnx = RCNNExportOnnx(configs["rCnn"])
+        export_to_onnx.setup().run()
     pass
