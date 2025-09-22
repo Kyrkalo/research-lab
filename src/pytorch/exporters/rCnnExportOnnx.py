@@ -12,7 +12,7 @@ class RCNNExportOnnx(Exporter):
     def setup(self):
         
         self.model = torchvision.models.detection.maskrcnn_resnet50_fpn(weights="DEFAULT")
-        self.model.load_state_dict(torch.load(self.dcgan_config["model_name"] + ".pth", map_location=self.device))
+        self.model.load_state_dict(torch.load(self.config["model_name"] + ".pth", map_location=self.device))
         return self
 
     def run(self):
