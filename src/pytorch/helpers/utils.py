@@ -200,8 +200,8 @@ class MetricLogger:
         print(f"{header} Total time: {total_time_str} ({total_time / len(iterable):.4f} s / it)")
 
 
-def collate_fn(batch):
-    return tuple(zip(*batch))
+# def collate_fn(batch):
+#     return tuple(zip(*batch))
 
 
 def mkdir(path):
