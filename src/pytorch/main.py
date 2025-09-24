@@ -53,7 +53,7 @@ configs = {
         "data_root": "artifacts/PennFudanPed",
         "model_name": "rCnn_model_pedestrian",
         "learning_rate": 0.004,
-        "num_epochs": 20,
+        "num_epochs": 1,
     }
 }
 
