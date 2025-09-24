@@ -39,7 +39,7 @@ from models.dummyGPTModel import DummyGPTModel
 from models.feedForward import ExampleDeepNeuralNetwork, FeedForward, print_gradients
 from models.gpt_model import GPTModel
 from models.layerNorm import LayerNorm
-from models.tools import calculate_size
+#from models.tools import calculate_size
 from models.transformerBlock import TransformerBlock
 from poviders import GPTConfig, get_config
 
