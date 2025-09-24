@@ -2,6 +2,9 @@ import torchvision
 from torchvision.models.detection.faster_rcnn import FastRCNNPredictor
 from torchvision.models.detection.mask_rcnn import MaskRCNNPredictor
 
+from src.pytorch.dataloaders.rCnnDataLoader import RCnnDataLoader
+from src.pytorch.trainers.rCnnTrainer import RCnnTrainer
+
 class RCnnPipeline:
     def __init__(self, configs=None):
         self.device = configs["device"] if configs and "device" in configs else self.device
@@ -31,8 +34,10 @@ class RCnnPipeline:
     def setup(self):
         self.model = self.get_model_instance_segmentation()
         self.model.to(self.device)
-        
+        train_loader, test_loader = RCnnDataLoader(self.config).Get()
+        self.train = RCnnTrainer(self.model, train_loader, test_loader, self.config)
         return self
 
     def run(self):
+        self.train.train()
         return self
