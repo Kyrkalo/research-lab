@@ -8,7 +8,8 @@ class Exporter():
         self.config = config if config else {}
 
     def getPath(self, extension, prefix=""):
-        return Path(f"{prefix}{self.dcgan_config["model_name"]}.{extension}")
+        
+        return Path(f"{prefix}{self.config["model_name"]}.{extension}")
 
     def run(self):
         return self

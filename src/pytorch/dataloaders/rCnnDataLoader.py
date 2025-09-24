@@ -17,7 +17,7 @@ class RCnnDataLoader:
         transforms.append(T.ToPureTensor())
         return T.Compose(transforms)
     
-    def collate_fn(batch):
+    def collate_fn(self, batch):
         return tuple(zip(*batch))
 
     def Get(self):

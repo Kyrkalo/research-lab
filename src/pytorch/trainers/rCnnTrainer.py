@@ -1,6 +1,6 @@
+import os
 import torch
-from src.notebook.engine import train_one_epoch
-from src.pytorch.helpers.coco_eval import evaluate
+from src.notebook.engine import evaluate, train_one_epoch
 
 class RCnnTrainer:
     def __init__(self, model, data_loader, data_test, config):
@@ -15,7 +15,7 @@ class RCnnTrainer:
         params = [p for p in self.model.parameters() if p.requires_grad]
         optimizer = torch.optim.SGD(
             params,
-            lr=self.config["learlearning_rate"],
+            lr=self.config["learning_rate"],
             momentum=0.9,
             weight_decay=0.0005
         )
@@ -30,4 +30,6 @@ class RCnnTrainer:
             train_one_epoch(self.model, optimizer, self.data_loader, self.device, epoch, print_freq=100)
             lr_scheduler.step()
             evaluate(self.model, self.data_test, device=self.device)
+            path = os.path.join(self.config["model_name"] + ".pth")
+            torch.save(self.model.state_dict(), path)
         pass
