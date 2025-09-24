@@ -1,15 +1,15 @@
 import torch
 from torchvision.transforms import v2 as T
-from src.pytorch.datasets import PennFudanDataset
+
+from src.pytorch.datasets.PennFudanDataset import PennFudanDataset
 
 
 class RCnnDataLoader:
     def __init__(self, configs=None):
         self.config = configs if configs is not None else {}
         self.device = self.config["device"] if "device" in self.config else "cpu"
-        return self
     
-    def get_transform(train):
+    def get_transform(self, train):
         transforms = []
         if train:
             transforms.append(T.RandomHorizontalFlip(0.5))

@@ -50,7 +50,7 @@ configs = {
         "device": device,
         "out_channels": 1280,
         "num_classes": 2,
-        "data_root": "data/PennFudanPed",
+        "data_root": "artifacts/PennFudanPed",
         "model_name": "rCnn_model_pedestrian",
         "learning_rate": 0.005,
         "num_epochs": 1,
