@@ -18,9 +18,15 @@ class PennFudanDataset(torch.utils.data.Dataset):
 
     def __getitem__(self, idx):
         # load images and masks
-        
+        # full_path = os.path.join(self.root, "PNGImages")
+        # self.imgs = list(sorted(os.listdir(full_path)))
         img_path = os.path.join(self.root, "PNGImages", self.imgs[idx])
         mask_path = os.path.join(self.root, "PedMasks", self.masks[idx])
+
+        if not os.path.exists(img_path):
+            raise FileNotFoundError(f"Image not found: {img_path}")
+        if not os.path.exists(mask_path):
+            raise FileNotFoundError(f"Mask not found: {mask_path}")
         
         if not os.path.exists(img_path):
             raise FileNotFoundError(f"Image not found: {img_path}")
