@@ -14,6 +14,7 @@ builder.Services.AddHttpClient<TokenizerApiService>("Encode", client => { client
 builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client.BaseAddress = new Uri($"{tokenizerApiSettings.BaseUrl}/decode"); });
 builder.Services.AddSingleton<IToTensorConverter, MnistImageConverter>();
 builder.Services.AddTransient<GanGeneratorService>();
+builder.Services.AddTransient<RCnnService>();
 
 builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
     client.BaseAddress = new Uri("http://localhost:11434");
@@ -27,7 +28,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<TokenizerApiService>();
 builder.Services.AddControllers();
-
+builder.Services.AddServerSideBlazor()
+    .AddHubOptions(o => o.MaximumReceiveMessageSize = 1024 * 1024 * 100);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

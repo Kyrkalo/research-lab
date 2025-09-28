@@ -4,11 +4,6 @@ namespace OnnxHub.Onnx.Converter;
 
 public class GanConverter : IToTensorConverter
 {
-    public DenseTensor<float> Convert(byte[] bytes)
-    {
-        throw new NotImplementedException();
-    }
-
     private static void Gaussian(Span<float> span)
     {
         var rng = new Random();
@@ -34,5 +29,20 @@ public class GanConverter : IToTensorConverter
         var denseTensors = new DenseTensor<float>(bytes);
         Gaussian(denseTensors.Buffer.Span);
         return denseTensors;
+    }
+
+    public DenseTensor<float> Convert(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public DenseTensor<float> Convert(byte[] bytes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<DenseTensor<float>> ConvertAsync(Stream stream, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

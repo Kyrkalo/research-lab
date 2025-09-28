@@ -114,6 +114,7 @@ class RCNNExportOnnx(Exporter):
         # 2) Load checkpoint
         ckpt_stem = self.config["model_name"]  # required
         ckpt_path = Path(f"{ckpt_stem}.pth")
+        print('path', ckpt_path)
         if not ckpt_path.exists():
             raise FileNotFoundError(f"Checkpoint not found: {ckpt_path}")
 

@@ -1,7 +1,45 @@
 ﻿@page "/rcnn"
+@using OnnxHub.Services
+@inject RCnnService _rCnnService
+@rendermode InteractiveServer
 
-<h3>RCnn</h3>
+<h3>R-CNN Pedestrian Detection</h3>
+
+<PageTitle>R-CNN Pedestrian Detection</PageTitle>
+
+<div class="row">
+    <InputFile OnChange="OnInputFileChange" accept="image/*" />
+</div>
+@if (_imgDataUrl is not null)
+{
+    <div class="row">
+        <div style="position:relative; display:inline-block;">
+            @if (_result is not null)
+            {
+                <div class="col-auto mb-3">
+                    <img src="data:image/png;base64,@_result.Image" />
+                </div>
+            }
+        </div>
+    </div>
+}
 
 @code {
 
+    private string _imgDataUrl;
+    private RCnnResponse _result;
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var ms = new MemoryStream();
+        await file.OpenReadStream(maxAllowedSize: 20 * 1024 * 1024).CopyToAsync(ms);
+        var bytes = ms.ToArray();
+
+        _imgDataUrl = $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}";
+
+        _result = _rCnnService.Run(new RCnnRequest(bytes), CancellationToken.None) as RCnnResponse;
+
+        StateHasChanged();
+    }
 }

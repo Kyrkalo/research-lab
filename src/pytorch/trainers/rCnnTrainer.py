@@ -31,5 +31,6 @@ class RCnnTrainer:
             lr_scheduler.step()
             evaluate(self.model, self.data_test, device=self.device)
             path = os.path.join(self.config["model_name"] + ".pth")
+            print('path', path)
             torch.save(self.model.state_dict(), path)
         pass
