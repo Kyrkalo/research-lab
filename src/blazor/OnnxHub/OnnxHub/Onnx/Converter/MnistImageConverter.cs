@@ -17,7 +17,6 @@ public class MnistImageConverter : IToTensorConverter
     {
         using var img = Image.Load<Rgba32>(bytes);
 
-        // 1) If the image has transparency, flatten it on a white background
         if (HasAlpha(img))
         {
             using var white = new Image<Rgba32>(img.Width, img.Height, new Rgba32(255, 255, 255, 255));
@@ -25,17 +24,13 @@ public class MnistImageConverter : IToTensorConverter
             img.Mutate(x => x.DrawImage(white, 1f));
         }
 
-        // 2) Grayscale
         img.Mutate(x => x.Grayscale());
 
-        // 3) Invert (so background is white, digit is black) if desired
         if (Invert)
             img.Mutate(x => x.Invert());
 
-        // 4) Resize to 28x28 (model input)
         img.Mutate(x => x.Resize(W, H));
 
-        // 5) Read pixels → tensor [1,1,28,28], normalize with MNIST stats
         var data = new float[1 * 1 * H * W]; // NCHW
         img.ProcessPixelRows(accessor =>
         {
@@ -44,7 +39,6 @@ public class MnistImageConverter : IToTensorConverter
                 var row = accessor.GetRowSpan(y);
                 for (int x = 0; x < W; x++)
                 {
-                    // After grayscale, R=G=B. Use R channel.
                     float gray01 = row[x].R / 255f;
                     data[y * W + x] = (gray01 - Mean) / Std;
                 }
@@ -72,6 +66,16 @@ public class MnistImageConverter : IToTensorConverter
     }
 
     public DenseTensor<float> Convert(int[] bytes)
+    {
+        throw new NotImplementedException();
+    }
+
+    public DenseTensor<float> Convert(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<DenseTensor<float>> ConvertAsync(Stream stream, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

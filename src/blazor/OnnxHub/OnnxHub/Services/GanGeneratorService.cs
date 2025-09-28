@@ -20,8 +20,9 @@ public class GanGeneratorService
     }
 
     public async Task<List<string>> Generate()
-    {        
-        var inputs = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor("z", _converter.Convert(new int[] { 4, 100, 1, 1 })) };
+    {
+        var inputName = _session.InputMetadata.First().Key;
+        var inputs = new List<NamedOnnxValue> { NamedOnnxValue.CreateFromTensor(inputName, _converter.Convert(new int[] { 4, 100, 1, 1 })) };
 
         var results = _session.Run(inputs);
 
