@@ -25,6 +25,7 @@ namespace OnnxHub.Onnx
                 return new ModelRegistry()
                 .Add("mdl_mnist_202520", mdl_mnist_202520, new MnistImageConverter())
                 .Add("gen_faces", gen, new GanConverter())
+                //https://github.com/onnx/models/blob/main/validated/vision/object_detection_segmentation/faster-rcnn/model/FasterRCNN-10.onnx
                 .Add("FasterRCNN-10", rcnnPedestrians, new RCNNConveror());
             });
         }
