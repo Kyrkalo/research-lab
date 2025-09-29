@@ -15,11 +15,14 @@ builder.Services.AddHttpClient<TokenizerApiService>("Decode", client => { client
 builder.Services.AddSingleton<IToTensorConverter, MnistImageConverter>();
 builder.Services.AddTransient<GanGeneratorService>();
 builder.Services.AddTransient<RCnnService>();
+builder.Services.AddTransient<MnistService>();
 
 builder.Services.AddHttpClient<LLamaApi>("llama3.2", client => {
     client.BaseAddress = new Uri("http://localhost:11434");
     client.Timeout = TimeSpan.FromSeconds(30);
 });
+
+builder.Services.Configure<SysConfigurations>(builder.Configuration.GetSection("SysConfigurations"));
 
 builder.Services.AddSingletonOnnx();
 
