@@ -1,4 +1,6 @@
-﻿using Microsoft.ML.OnnxRuntime;
+﻿using Microsoft.Extensions.Options;
+using Microsoft.ML.OnnxRuntime;
+using OnnxHub.Infrastructure;
 using OnnxHub.Onnx;
 using OnnxHub.Onnx.Converter;
 using SixLabors.Fonts;
@@ -9,40 +11,73 @@ using SixLabors.ImageSharp.Processing;
 
 namespace OnnxHub.Services;
 
+/// <summary>
+/// 
+/// </summary>
+/// <param name="Box"></param>
+/// <param name="Label"></param>
+/// <param name="Confidence"></param>
 public record Prediction(Box Box, string Label, float Confidence);
 
+/// <summary>
+/// Represents a rectangular bounding box defined by its minimum and maximum coordinates.
+/// </summary>
+/// <remarks>The box is defined in a 2D coordinate space, where <paramref name="Xmin"/> and <paramref
+/// name="Ymin"/>  specify the bottom-left corner, and <paramref name="Xmax"/> and <paramref name="Ymax"/> specify the 
+/// top-right corner. It is assumed that <paramref name="Xmin"/> is less than or equal to <paramref name="Xmax"/>,  and
+/// <paramref name="Ymin"/> is less than or equal to <paramref name="Ymax"/>.</remarks>
+/// <param name="Xmin">The minimum X-coordinate of the box.</param>
+/// <param name="Ymin">The minimum Y-coordinate of the box.</param>
+/// <param name="Xmax">The maximum X-coordinate of the box.</param>
+/// <param name="Ymax">The maximum Y-coordinate of the box.</param>
 public record Box(float Xmin, float Ymin, float Xmax, float Ymax);
 
+/// <summary>
+/// Represents a request for an RCNN (Region-based Convolutional Neural Network) operation,  containing the input data
+/// and a threshold for filtering results based on confidence scores.
+/// </summary>
+/// <param name="Bytes">The input data as a byte array, typically representing an image or other binary content. This parameter cannot be
+/// null.</param>
+/// <param name="scoreThreshold">The minimum confidence score required for a result to be included.  Must be a value between 0 and 1, where higher
+/// values result in stricter filtering.  The default value is 0.5.</param>
 public record RCnnRequest(byte[] Bytes, float scoreThreshold = 0.5f) : IServiceRequest;
 
+/// <summary>
+/// Represents the response returned by an R-CNN image processing operation.
+/// </summary>
+/// <remarks>This response contains the processed image data as a string. The format and content of the string 
+/// depend on the specific implementation of the R-CNN operation.</remarks>
+/// <param name="Image">The processed image data, typically encoded as a string. The exact format of the string  (e.g., base64, JSON, or
+/// another format) depends on the operation producing the response.</param>
 public record RCnnResponse(string Image) : IServiceResponse;
 
-public class RCnnService : INNService
+public class RCnnService : BaseSarvice, INNService
 {
-    private readonly InferenceSession _session;
-    private readonly IToTensorConverter _converter;
+    private readonly SysConfigurations _sysConfigurations;
+    private readonly Entry _entry;
     private readonly float _minConfidence = 0.7f;
 
-    public RCnnService(IModelRegistry modelRegistry)
+    public RCnnService(IModelRegistry modelRegistry, IOptions<SysConfigurations> options)
     {
-        modelRegistry.TryGet("FasterRCNN-10", out InferenceSession session, out IToTensorConverter converter);
-        _session = session;
-        _converter = converter;
+        modelRegistry.TryGet(nameof(RCnnService), out var entry);
+        _sysConfigurations = options.Value;
+        _entry = entry;
     }
 
-    public IServiceResponse Run(IServiceRequest request, CancellationToken cancellationToken)
+    public override IServiceResponse Run(IServiceRequest request, CancellationToken cancellationToken)
     {
         if (request is not RCnnRequest rCnnRequest)
             throw new ArgumentException("Invalid request type");
 
-        var input = _converter.Convert(rCnnRequest.Bytes);
-        var inputParams = GetParams(_converter);
+        var input = _entry.Converter.Convert(rCnnRequest.Bytes);
+        var inputParams = GetParams(_entry.Converter);
 
         var inputs = new List<NamedOnnxValue>
         {
             NamedOnnxValue.CreateFromTensor("image", input)
         };
 
+        using var _session = GetInferenceSession(_sysConfigurations, _entry.Model);
         using IDisposableReadOnlyCollection<DisposableNamedOnnxValue> results = _session.Run(inputs);
 
         var resultsArray = results.ToArray();
@@ -96,6 +131,13 @@ public class RCnnService : INNService
         throw new NotImplementedException();
     }
 
+    /// <summary>
+    /// Retrieves a dictionary of input parameters from the specified tensor converter.
+    /// </summary>
+    /// <param name="toTensorConverter">An object that converts data to tensors. Must implement the <see cref="IParams"/> interface.</param>
+    /// <returns>A dictionary where the keys represent parameter types and the values represent the corresponding parameter
+    /// values.</returns>
+    /// <exception cref="ArgumentException">Thrown if <paramref name="toTensorConverter"/> does not implement the <see cref="IParams"/> interface.</exception>
     private Dictionary<InputParamType, object> GetParams(IToTensorConverter toTensorConverter)
     {
         if (toTensorConverter is IParams paramConverter)

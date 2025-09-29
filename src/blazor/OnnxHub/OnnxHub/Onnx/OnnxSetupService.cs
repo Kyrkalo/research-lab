@@ -1,31 +1,26 @@
-﻿using Microsoft.ML.OnnxRuntime;
-using OnnxHub.Onnx.Converter;
+﻿using OnnxHub.Onnx.Converter;
+using OnnxHub.Services;
 
 namespace OnnxHub.Onnx
 {
     public static class OnnxSetupService
     {
+        /// <summary>
+        /// Registers a singleton instance of <see cref="IModelRegistry"/> in the service collection.
+        /// </summary>
+        /// <remarks>This method configures and registers an <see cref="IModelRegistry"/> implementation
+        /// that provides pre-configured ONNX models for inference. The registry includes models for tasks such as image
+        /// classification, generative adversarial networks, and object detection.</remarks>
+        /// <param name="service">The <see cref="IServiceCollection"/> to which the singleton instance will be added.</param>
         public static void AddSingletonOnnx(this IServiceCollection service)
         {
             service.AddSingleton<IModelRegistry>(e =>
             {
-                var sessionOptions = new Microsoft.ML.OnnxRuntime.SessionOptions()
-                {
-                    GraphOptimizationLevel = GraphOptimizationLevel.ORT_ENABLE_ALL,
-                    EnableMemoryPattern = true,
-                    ExecutionMode = ExecutionMode.ORT_PARALLEL
-                };
-
-                //sessionOptions.AppendExecutionProvider_CUDA();
-
-                var mdl_mnist_202520 = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "mdl_mnist_202520.onnx"), sessionOptions);
-                var gen = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "generator.onnx"), sessionOptions);
-                var rcnnPedestrians = new InferenceSession(Path.Combine(AppContext.BaseDirectory, "Onnx/Models", "FasterRCNN-10.onnx"), sessionOptions);
-
+                // todo: will be reafacoterd to load model from configuration
                 return new ModelRegistry()
-                .Add("mdl_mnist_202520", mdl_mnist_202520, new MnistImageConverter())
-                .Add("gen_faces", gen, new GanConverter())
-                .Add("FasterRCNN-10", rcnnPedestrians, new RCNNConveror());
+                .Add(nameof(MnistService), "mdl_mnist_202520.onnx", new MnistImageConverter())
+                .Add(nameof(GanGeneratorService), "generator.onnx", new GanConverter())
+                .Add(nameof(RCnnService), "FasterRCNN-10.onnx", new RCNNConveror());
             });
         }
     }

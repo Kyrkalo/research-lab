@@ -32,14 +32,15 @@
     private bool busy = false;
     private List<string> images;
 
-    private async Task Generate()
+    private void Generate()
     {
         busy = true; 
         StateHasChanged();
 
         try
         {
-            images = await _ganGeneratorService.Generate(); 
+            var response = _ganGeneratorService.Run(new GanRequest(), CancellationToken.None);
+            images = ((GanResponse)response).Images;
         }
         finally 
         { 
