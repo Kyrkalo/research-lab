@@ -40,5 +40,21 @@ This document provides a comparison of commonly used **activation and output fun
 
 ---
 
-_Last updated: 2025-06-07_
+## 🔊 Pre-Trained Audio Models in PyTorch
+
+| Model | Type | Highlights | Best Use Case | Training & Inference Code |
+|-------|------|------------|---------------|---------------------------|
+| **PANNs** (CNN10 / CNN14 / Wavegram-Logmel-CNN) | CNN | Trained on **AudioSet**, strong embeddings for downstream tasks | General-purpose sound event detection & transfer learning | [GitHub – audioset_tagging_cnn](https://github.com/qiuqiangkong/audioset_tagging_cnn) |
+| **AST** (Audio Spectrogram Transformer) | Transformer | High accuracy on ESC-50, AudioSet, FSD50K | Max accuracy on medium/large datasets | [GitHub – YuanGongND/ast](https://github.com/YuanGongND/ast) |
+| **PaSST** (Efficient Audio Transformers) | Transformer | Lighter AST variant, efficient for long audios | High accuracy with lower compute demand | [GitHub – kkoutini/PaSST](https://github.com/kkoutini/PaSST) |
+| **HTS-AT** (Hierarchical Token-Semantic AT) | Transformer | Hierarchical attention, top leaderboard results | Research & SOTA performance | [GitHub – HTS-Audio-Transformer](https://github.com/RetroCirce/HTS-Audio-Transformer) |
+| **VGGish** | CNN | Classic log-mel feature extractor | Simple feature frontend + custom classifier | [GitHub – torchvggish](https://github.com/harritaylor/torchvggish)<br>[Docs – v-iashin/vggish](https://v-iashin.github.io/video_features/models/vggish/) |
+| **Wav2Vec 2.0** | Self-Supervised Encoder | Learns from raw waveforms, powerful transfer learning | Low-label datasets, robust embeddings for speech & sound | [Torchaudio Tutorial](https://docs.pytorch.org/audio/2.3.0/tutorials/speech_recognition_pipeline_tutorial.html)<br>[HF Fine-Tuning Guide](https://huggingface.co/blog/fine-tune-wav2vec2-english) |
+| **BC-ResNet** | CNN (compact) | Small footprint, efficient on-device | Edge deployment, low-power devices (KWS, IoT) | [GitHub – bcresnet](https://github.com/Qualcomm-AI-research/bcresnet) |
+| **EfficientAT** | CNN (lightweight) | AudioSet-pretrained, optimized for speed | Efficient large-scale tagging, resource-limited training | [GitHub – EfficientAT](https://github.com/fschmid56/EfficientAT) |
+| **SSAST** (Self-Supervised AST) | Transformer | Self-supervised AST, transfer friendly | Transfer learning when labeled data is scarce | [GitHub – ssast](https://github.com/YuanGongND/ssast) |
+| **SAT** (Streaming Audio Transformers) | Transformer | Low-latency, streaming audio tagging | Real-time audio classification (online/continuous) | [GitHub – SAT](https://github.com/RicherMans/SAT) |
+
+
+_Last updated: 2025-10-01_
 
