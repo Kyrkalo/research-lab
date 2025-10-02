@@ -8,16 +8,17 @@
 <PageTitle>R-CNN Pedestrian Detection</PageTitle>
 
 <div class="row">
-    <InputFile OnChange="OnInputFileChange" accept="image/*" />
+    <label for="formFile" class="form-label">Default file input example</label>
+    <InputFile OnChange="OnInputFileChange" class="form-control" accept="image/*" />
 </div>
 @if (_imgDataUrl is not null)
 {
     <div class="row">
-        <div style="position:relative; display:inline-block;">
+        <div style="position:relative; display:inline-block; padding-top:20px;">
             @if (_result is not null)
             {
-                <div class="col-auto mb-3">
-                    <img src="data:image/png;base64,@_result.Image" />
+                <div class="col-md-5">
+                    <img class="img-fluid img-thumbnail" src="data:image/png;base64,@_result.Image" />
                 </div>
             }
         </div>
