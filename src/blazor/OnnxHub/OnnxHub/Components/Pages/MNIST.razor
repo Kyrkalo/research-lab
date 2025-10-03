@@ -24,20 +24,15 @@
     protected async override Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
+        {
             await JS.InvokeAsync<object>("window.initPage", DotNetObjectReference.Create(this));
-
+        }
         await base.OnInitializedAsync();
     }
 
-    private async Task ClearImage()
-    {
-        await JS.InvokeAsync<object>("window.clearImage", DotNetObjectReference.Create(this));
-    }
+    private async Task ClearImage() => await JS.InvokeAsync<object>("window.clearImage", DotNetObjectReference.Create(this));
 
-    private async Task Predict()
-    {
-        await JS.InvokeAsync<object>("window.predict", DotNetObjectReference.Create(this));
-    }
+    private async Task Predict() => await JS.InvokeAsync<object>("window.predict", DotNetObjectReference.Create(this));
 }
 
 <script>
