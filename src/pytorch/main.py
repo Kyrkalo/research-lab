@@ -1,8 +1,10 @@
 
 from enum import Enum
 import torch
+from src.pytorch.exporters import cnn14ExportOnnx
 from src.pytorch.exporters.dcganExportOnnx import DcganExportOnnx
 from src.pytorch.exporters.rCnnExportOnnx import RCNNExportOnnx
+from src.pytorch.pipelines.cnn14Pipeline import Cnn14Pipeline
 from src.pytorch.pipelines.mnistPipeline import MnistPipeline, MnistExportOnnx
 from src.pytorch.pipelines.dcganPipeline import DcganPipeline
 from src.pytorch.pipelines.rCnnPipeline import RCnnPipeline
@@ -13,6 +15,7 @@ class ModelTypes(Enum):
     MNIST = "mnist"
     DCGAN = "dcgan"
     RCNN = "rCnn"
+    CNN14 = "cnn14"
 
 
 configs = {
@@ -54,6 +57,10 @@ configs = {
         "model_name": "rCnn_model_pedestrian",
         "learning_rate": 0.004,
         "num_epochs": 1,
+    },
+    "cnn14": {
+        "device": device,
+        "model_name": "cnn14_model",
     }
 }
 
@@ -78,4 +85,11 @@ def run(modeltype: ModelTypes):
 
         export_to_onnx = RCNNExportOnnx(configs["rCnn"])
         export_to_onnx.setup().run()
+
+    elif modeltype == ModelTypes.CNN14:
+        cnn14_pipeline = Cnn14Pipeline(configs["cnn14"])
+        cnn14_pipeline.setup().run()
+
+        cnn14_to_onnx = cnn14ExportOnnx(configs["cnn14"])
+        cnn14_to_onnx.setup().run()
     pass
